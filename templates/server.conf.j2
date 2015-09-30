@@ -1,0 +1,67 @@
+input{
+    log4j {
+        mode => "server"
+        # replace host with the hostname of the server we are running on
+        host => "{{ logstash_hostname }}"
+        port => {{ logstash_listen_port_log4j }}
+        add_field => { "source" => "log4j" }
+    }
+    gelf {
+        # replace host with the hostname of the server we are running on
+        host => "{{ logstash_hostname }}"
+        port => {{ logstash_listen_port_gelf }}
+        remap => false
+        add_field => { "source" => "gelf" }
+    }
+}
+
+filter{
+    mutate {
+        rename => ["host", "source_host"]
+    }
+
+    if [source] == "log4j" {
+        mutate { 
+            remove_field => ["class", "file", "method", "path", "source", "thread"]
+            add_field => { "type" => "%{application}" }
+        }
+
+    } else if [source] == "gelf" {
+
+        # make gelf fields consistent with log4j
+        mutate { 
+            add_field => { "type" => "{{ logstash_gelf_field_type }}" }
+            rename => ["facility", "application"]
+            rename => ["loggerName", "logger_name"]
+            rename => ["full_message", "message"]
+        }
+
+        if [level] == 7 {
+            mutate { add_field => { "priority" => "DEBUG" } }
+        } else if [level] == 6 {
+            mutate { add_field => { "priority" => "INFO" } }
+        } else if [level] == 4 {
+            mutate { add_field => { "priority" => "WARN" } }
+        } else if [level] == 3 {
+            mutate { add_field => { "priority" => "ERROR" } }
+        }
+
+        mutate { remove_field => ["level", "short_message", "source"] }
+    }
+
+    mutate{
+        rename => ["@timestamp", "timestamp"]
+}
+
+}
+
+output{
+    elasticsearch {
+        # replace with the elasticsearch host in your deployment
+        host => "{{ logstash_elasticsearch_host }}"
+        port => "{{ logstash_elasticsearch_port }}"
+        # make sure the cluster name matches whatever is in elasticsearch.yaml or logs won't be pushed into ES
+        cluster => "{{ logstash_elasticsearch_cluster_name }}"
+        index => "%{type}_logs"
+    }
+}
