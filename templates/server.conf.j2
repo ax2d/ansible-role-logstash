@@ -58,6 +58,8 @@ filter{
 output{
     elasticsearch {
         # replace with the elasticsearch host in your deployment
+        # use with logstash version >= 1.5
+        # hosts => ["{{ logstash_elasticsearch_hosts }}"]
         host => "{{ logstash_elasticsearch_host }}"
         port => "{{ logstash_elasticsearch_port }}"
         # make sure the cluster name matches whatever is in elasticsearch.yaml or logs won't be pushed into ES
