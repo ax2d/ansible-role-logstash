@@ -63,7 +63,7 @@ output{
         host => "{{ logstash_elasticsearch_host }}"
         port => "{{ logstash_elasticsearch_port }}"
         # make sure the cluster name matches whatever is in elasticsearch.yaml or logs won't be pushed into ES
-        cluster => "{{ logstash_elasticsearch_cluster_name }}"
+        cluster => "{{ es_cluster_name }}"
         index => "%{type}_logs"
     }
 }

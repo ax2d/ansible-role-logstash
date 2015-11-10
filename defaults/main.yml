@@ -4,7 +4,7 @@ logstash_listen_port_log4j: 4560
 logstash_listen_port_gelf: 12201
 logstash_gelf_field_type: 'gondola'
 
-logstash_elasticsearch_cluster_name: 'logs'
+es_cluster_name: 'logs'
 
 # use http port 9200 with logstash version >=1.5
 logstash_elasticsearch_port: "9300"
