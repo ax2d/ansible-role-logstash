@@ -48,11 +48,6 @@ filter{
 
         mutate { remove_field => ["level", "short_message", "source"] }
     }
-
-    mutate{
-        rename => ["@timestamp", "timestamp"]
-}
-
 }
 
 output{
