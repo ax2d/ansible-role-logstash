@@ -6,5 +6,11 @@
     dest: /etc/yum.repos.d/logstash.repo
     mode: 0644
 
+- name: yum clean all
+  command: yum clean all
+
 - name: Install Logstash.
-  yum: pkg=logstash state=installed
+  yum: pkg=logstash state=latest
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload

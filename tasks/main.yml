@@ -5,6 +5,14 @@
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
+#- name: "Install Logstash Plugins"
+#  shell: |
+#    executable=/bin/bash
+#    chdir=/opt/logstash
+#    sudo bin/plugin install {{ item }}
+#  with_items:
+#    - logstash-output-elasticsearch_java
+
 - name: Create Logstash configuration files.
   template:
     src: "{{ item }}.j2"
